@@ -22,12 +22,12 @@ const postController = {
           post.save();
           res.json(post);
         } catch (err) {
-          console.log(err);
+          console.log("CreatePost_ERROR => ",err);
           res.sendStatus(400);
         }
       },
       UploadImage: async(req, res) => {
-        console.log(req.files);
+        //console.log(req.files);
         try {
           const result = await Cloudinary.uploader.upload(req.files.image.path)
           //console.log(result);
@@ -36,7 +36,7 @@ const postController = {
             public_id: result.public_id
           })
         } catch (error) {
-          console.log("ERROR UPLOAD IMAGE =>", error)
+          console.log(" UPLOAD_IMAGE_ERROR => ", error)
           return res.status(500).json({error})
         }
       },
@@ -58,7 +58,8 @@ const postController = {
           // console.log('posts',posts)
           //res.json(posts);
         } catch (err) {
-          console.log(err);
+          console.log("GetPostByUser =>", err);
+          return res.status(500).json({err})
         }
       },
       GetPostById: async(req, res) => {
@@ -69,9 +70,8 @@ const postController = {
             .populate("comments.postedBy", "_id name image");
             return res.json(post);
           } catch (error) {
-            console.log(error)
-            return res.status(500)
-
+            console.log("GetPostById => ",error)
+            return res.status(500).json({error})
           }
 
 
@@ -85,8 +85,8 @@ const postController = {
           return res.json(post)
         } catch (error) {
           
-          console.log(error)
-          return res.status(500)
+          console.log("UpdatePostById_ERROR =>",error)
+          return res.status(500).json({error})
         }
       },
       DeletePostById: async(req, res) => {
@@ -98,8 +98,8 @@ const postController = {
           }
           return res.json({ok: true})
         } catch (error) {
-          console.log(error);
-          return res.status(500);
+          console.log("DeletePostById_ERROR =>",error)
+          return res.status(500).json({error})
         }
 
       },
@@ -120,7 +120,8 @@ const postController = {
           const totalPosts = await Post.find({ postedBy: {$in: following} });  
           res.json({posts, length: posts.length, totalPosts: totalPosts.length });
         } catch (err) {
-          console.log(err);
+          console.log("DeletePostById_ERROR =>",err)
+          return res.status(500).json({err})
         }
       },
       LikePost : async (req, res) => {
@@ -133,8 +134,9 @@ const postController = {
             { new: true }
           );
           res.json(post);
-        } catch (err) {
-          console.log(err);
+        } catch (error) {
+          console.log("LIKE_ERROR =>",error)
+          return res.status(500).json({error})
         }
       }
       ,UnlikePost: async (req, res) => {
@@ -147,8 +149,9 @@ const postController = {
             { new: true }
           );
           res.json(post);
-        } catch (err) {
-          console.log(err);
+        } catch (error) {
+          console.log("UNLIKE_ERROR =>",error)
+          return res.status(500).json({error})
         }
       },
       AddComment: async (req, res) => {
@@ -164,8 +167,9 @@ const postController = {
             .populate("postedBy", "_id name image")
             .populate("comments.postedBy", "_id name image");
           res.json(post);
-        } catch (err) {
-          console.log(err);
+        } catch (error) {
+          console.log("AddComment_ERROR =>",error)
+          return res.status(500).json({error})
         }
       }
       ,RemoveComment: async (req, res) => {
@@ -179,8 +183,9 @@ const postController = {
             { new: true }
           );
           res.json(post);
-        } catch (err) {
-          console.log(err);
+        } catch (error) {
+          console.log("RemoveComment_ERROR =>",error)
+          return res.status(500).json({error})
         }
       },
       TotalPosts: async(req, res) => {

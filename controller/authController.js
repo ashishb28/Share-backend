@@ -53,7 +53,7 @@ const jwt = require("jsonwebtoken");
           user,
         });
       } catch (err) {
-        console.log(err);
+        console.log("LOGIN_ERROR => ", err);
         return res.status(400).send("Error. Try again.");
       }
     },
@@ -75,8 +75,8 @@ const jwt = require("jsonwebtoken");
           user.secret = undefined;
           return res.json({user, ok: true})
       } catch (error) {
+        console.log("UpdateUserProfile_ERROR => ", error)
         res.status(500).send({error: error});
-        console.log(error)
       }
 
     },
@@ -90,7 +90,8 @@ const jwt = require("jsonwebtoken");
         .limit(10);
         res.json(people);
       } catch (error) {
-        console.log(err);
+        console.log("FRIEND_SUGGESTION_ERROR => ", error);
+        res.status(500).send({error: error});
       }
     },
     AddFollower: async(req, res, next) => {
@@ -100,7 +101,7 @@ const jwt = require("jsonwebtoken");
           })
           next();
         } catch (error) {
-          console.log(error);
+          console.log("AddFollower_ERROR => ",error);
           return res.status(500).json(error)
         }
     }, 
@@ -111,7 +112,7 @@ const jwt = require("jsonwebtoken");
           }, {new: true}).select("-password -secret" )
           return res.json(user)
         } catch (error) {
-          console.log(error)
+          console.log("UserFollow_ERROR => ",error)
           return res.status(500).json(error)
         }
     },
@@ -122,7 +123,7 @@ const jwt = require("jsonwebtoken");
         })
         next();
       } catch (error) {
-        console.log(error);
+        console.log("REMOVE_FOLLOWER_ERROR => ",error)
         return res.status(500).json(error)
       }
   },
@@ -133,7 +134,7 @@ const jwt = require("jsonwebtoken");
           }, {new: true}).select("-password -secret" )
           return res.json(user)
         } catch (error) {
-          console.log(error)
+          console.log("UserUnFollow_ERROR => ",error)
           return res.status(500).json(error)
         }
     },
@@ -143,7 +144,17 @@ const jwt = require("jsonwebtoken");
         const following = await User.find({_id: user.following}).limit(100);
         return res.json(following);
       } catch (error) {
-        console.log(error);
+        console.log("UserFollowingList => ",error);
+        return res.status(500).json(error);
+      }
+    },
+    UserFollowersList: async(req, res) => {
+      try {
+        const user = await User.findById(req.user._id);
+        const followers = await User.find({_id: user.followers}).limit(100);
+        return res.json(followers);
+      } catch (error) {
+        console.log("UserFollowersList => ",error);
         return res.status(500).json(error);
       }
     },
@@ -157,7 +168,7 @@ const jwt = require("jsonwebtoken");
             }).select('_id name image')
             return res.json(user);
       } catch (error) {
-        console.log(error);
+        console.log("SEARCH_USER_ERROR => ",error);
         return res.status(500).json(error)
       }
 
@@ -167,7 +178,7 @@ const jwt = require("jsonwebtoken");
         const user = await User.findOne({_id: req.params.id}).select('-password -secret');
         return res.json(user);
       } catch (error) {
-        console.log(error)
+        console.log("USER_PROFILE_ERROR => ",error);
         return res.sendStatus(400);
       }
 

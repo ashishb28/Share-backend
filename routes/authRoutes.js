@@ -12,6 +12,7 @@ router.get("/find-people", RequireSignIn, authController.FriendSuggestion);
 
 router.put("/user-follow", RequireSignIn, authController.AddFollower, authController.UserFollow)
 router.get("/following-list", RequireSignIn, authController.UserFollowingList)
+router.get("/followers-list", RequireSignIn, authController.UserFollowersList)
 router.put("/user-unfollow", RequireSignIn, authController.RemoveFollower, authController.UserUnFollow)
 
 router.get("/search-user/:query", authController.SearchUser)
